@@ -1,7 +1,6 @@
 @echo off
 setlocal
 color 0f
-title Stable Utility
 :ask_for_create_system_restore_point
 cls
 echo Let create system restore point(Used to undo all changes and restore if device brick)
@@ -139,13 +138,19 @@ set /p choice=Type "Y" to continue or "N" to cancel and press Enter:
 if /i "%choice%" == "Y" (
     cls
     echo Run advanced temporary cleanup, please wait...
+    takeown /f %windir%\System32\mcupdate_genuineintel.dll /r /d y > nul 2>&1
+    takeown /f %windir%\System32\mcupdate authenticamd.dll /r /d y > nul 2>&1
+    icacls %windir%\System32\mcupdate_genuineintel.dll /grant administrators:F /t > nul 2>&1
+    icacls %windir%\System32\mcupdate authenticamd.dll /grant administrators:F /t > nul 2>&1
+    del /F /S /Q %windir%\System32\mcupdate_genuineintel.dll
+    del /F /S /Q %windir%\System32\mcupdate authenticamd.dll
     del /F /S /Q %temp% > nul 2>&1
-    del /F /S /Q "C:\Windows\Temp" > nul 2>&1
-    del /F /S /Q "C:\Windows\Prefetch" > nul 2>&1
-    del /F /S /Q "C:\Windows\SoftwareDistribution\Download" > nul 2>&1
-    del /F /S /Q "C:\Windows\SoftwareDistribution\SLS" > nul 2>&1
+    del /F /S /Q %windir%\Temp > nul 2>&1
+    del /F /S /Q %windir%\Prefetch > nul 2>&1
+    del /F /S /Q %windir%\SoftwareDistribution\Download > nul 2>&1
+    del /F /S /Q %windir%\SoftwareDistribution\SLS > nul 2>&1
     del /F /S /Q "" > nul 2>&1
-    start %windir%cleanmgr.exe /AUTOCLEAN > nul 2>&1
+    start %windir%\System32\cleanmgr.exe /AUTOCLEAN > nul 2>&1
     cls
     echo Run advanced temporary cleanup successfully.
     timeout /t 5 /nobreak > nul
@@ -252,7 +257,7 @@ if /i "%choice%" == "Y" (
     echo Enable low latency mode successfully.
     echo Run advanced temporary cleanup successfully.
     echo Delete empty folder successfully.
-    echo disabled memory compression successfully.
+    echo Disabled memory compression successfully.
     timeout /t 5 /nobreak > nul
 ) else (
     cls
